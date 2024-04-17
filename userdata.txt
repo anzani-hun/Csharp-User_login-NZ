@@ -1,0 +1,59 @@
+ADATBÁZIS ELŐKÉSZÍTÉSE:
+Hozzatok létre egy új adatbázist userloginapp néven az adatbázis szerveren. Az adatbázis alapértelmezett esetben utf8 karakterkódolást és magyar karakterillesztést használjon.
+
+CREATE DATABASE userloginapp CHARACTER SET utf8 COLLATE utf8_hungarian_ci;
+
+
+
+
+################################################################
+################################################################
+- Az adatbázisban hozzatok létre egy táblát `userdata` néven a következő mezőkkel:
+    - `userid` - int, automatikusan számozott, ez az elsődleges kulcs - a felhasználót egyedileg azonosító szám
+    - `username` - varchar(255) - a bejelentkezési felhasználónév, nem lehet üres
+    - `email` - varchar(255) - a felhasználó e-mail címe
+    - `passwd` - varchar(255) - a felhasználó jelszava, nem lehet üres
+
+
+
+
+CREATE TABLE `userdata` ( 
+`userid` INT NOT NULL AUTO_INCREMENT, 
+`username` VARCHAR(255), 
+`email` VARCHAR(255),
+`password` VARCHAR(255) NOT NULL DEFAULT '',
+PRIMARY KEY(userid)
+);
+
+
+
+
+
+################################################################
+################################################################
+Vegyétek fel a következő felhasználókat a userdata táblába:
+
+
+INSERT INTO `userdata`(`username`, `email`, `password`) VALUES ('admin','rendszergazda@program.hu','almakorte');
+INSERT INTO `userdata`(`username`, `email`, `password`) VALUES ('pistike','huszarmatyi@gmail.com','12345');
+INSERT INTO `userdata`(`username`, `email`, `password`) VALUES ('tester','tester@program.hu','454cica');
+INSERT INTO `userdata`(`username`, `email`, `password`) VALUES ('hacker','minecrafthacker4@freemail.hu','asdasd');
+
+
+
+################################################################
+################################################################
+- Hozzatok létre egy új felhasználót az adatbázisszerveren, amely célja, hogy az általatok írt program használja a kapcsolat kialakítására. Ennek megfelelően ez a felhasználó csak a legszükségesebb jogosultságokkal kell, hogy rendelkezzen.
+    - Felhasználónév: `userloginclient`
+    - Jelszó: `almaeper`
+    - Jogosultságok: A teljes `userloginapp` adatbázis és minden táblájának lekérdezése.
+
+
+ha törölni akarjuk az usert, akkor: DROP USER userloginclient@localhost;
+
+
+SHELLBE PARANCS:
+mysql -u root -p
+CREATE USER 'userloginclient'@'localhost' IDENTIFIED BY 'almaeper';
+GRANT SELECT ON userloginapp.userdata TO 'userloginclient'@'localhost' WITH GRANT OPTION;
+		jogosultság ellenőrzése: SHOW GRANTS FOR 'userloginclient'@'localhost';

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,60 +26,134 @@ namespace Csharp_User_login_NZ
             }
             */
 
-                Console.BackgroundColor = ConsoleColor.Red;
-            Console.WriteLine("***Sziper-Szuper bejelentkező program 4000***");
-            Console.WriteLine("Kérem adja meg a bejelentkezési adatait");
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.WriteLine("***Sziper-Szuper bejelentkező program 4000***\n");
+            Console.WriteLine("Kérem adja meg a bejelentkezési adatait.");
 
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.Write("Felhasználónév: ");
-            string felhasznalonev = Console.ReadLine();
+            adatFeldolgoz();
 
-            Console.Write("Jelszó: ");
-            string jelszo = null;
-
-
-            while (true)
-            {
-                var key = System.Console.ReadKey(true);
-                if (key.Key == ConsoleKey.Enter)
-                    break;
-                jelszo = jelszo + key.KeyChar;
-            }
-
-
-            feldolgoz1(felhasznalonev, jelszo);
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Válassz a menüből: Lista | Kilépés");
+            
+            menu();
 
             Console.ReadKey();
         }
 
-        public static void feldolgoz1(string felhasznalonev, string jelszo)
+        private static void menu()
         {
-
-            //bool változó alapból false-ra állítva.
-            bool logged = false; 
-
-            foreach (Userdata adat in userdatas)
+            while (true)
             {
-                if (felhasznalonev == adat.Username)
+                string userValaszt = Console.ReadLine().ToLower();
+                Console.WriteLine("");
+                Console.WriteLine("Az adatbázisban tárolt felhasználónevek:");
+
+                switch (userValaszt)
                 {
-                    if (jelszo == adat.Password)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nSikeres bejelentkezés!");
-                        logged = true;
+                    //listával kiírattatjuk az összes felhasználót
+                    case "lista":
+                        foreach (Userdata adat in userdatas.OrderBy(a => a.Username))
+                        {
+                            Console.WriteLine($"- {adat.Username}");
+                        }
+                        Console.WriteLine("");
+                        Console.WriteLine("A teljes lista kiíratva. Gombnyomásra kilép.");
+                        Console.ReadKey();
+                        Environment.Exit(0);
                         break;
-                    }
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Rossz jelszó!");
+
+                    case "kilépés":
+                        Console.WriteLine("Kilépés! Az adatbázissal való kapcsolat zárása");
+                        Console.ReadKey();
+                        Environment.Exit(0);
+                        break;
+
+                    default :
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Érvénytelen parancs.");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        break;
+
                 }
             }
+        }
 
-            if (!logged)
+        public static void adatFeldolgoz()
+        {
+            while (true)
             {
-                Console.WriteLine("Sikertelen bejelentkezés!");
-            }
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("\nFelhasználónév: ");
+                string felhasznalonev = Console.ReadLine();
 
-            Console.ReadKey();
+                Console.BackgroundColor = ConsoleColor.Black;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine("Jelszó: ");
+                string jelszo = null;
+
+
+                //jelszó elrejtése
+                while (true)
+                {
+                    var key = System.Console.ReadKey(true);
+                    if (key.Key == ConsoleKey.Enter)
+                        break;
+                    jelszo = jelszo + key.KeyChar;
+                }
+                
+                if (felhasznaloKeres(felhasznalonev) == felhasznalonev)
+                {
+                        if (jelszoKeres(jelszo) == jelszo)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("\nSikeres bejelentkezés!\n");
+                            break;
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Hibás jelszó!");
+                        }  
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Hibás a felhasználónév!");
+                }
+            }
+        }
+
+
+
+        private static string jelszoKeres(string jelszo)
+        {
+            string password = null;
+
+            foreach (Userdata data in userdatas)
+            {
+                if (jelszo == data.Password)
+                {
+                    password = data.Password;
+                }
+            }
+            return password;
+        }
+
+
+
+        private static string felhasznaloKeres(string felhasznalonev)
+        {
+            string username = null;
+
+            foreach (Userdata data in userdatas) 
+            {
+                if (felhasznalonev == data.Username)
+                {
+                    username = data.Username;
+                }
+            }
+            return username;
         }
     }
 

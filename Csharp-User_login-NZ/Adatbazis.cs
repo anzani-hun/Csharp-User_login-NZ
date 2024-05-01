@@ -17,8 +17,8 @@ namespace Csharp_User_login_NZ
         {
             Server = "localhost",
             Port = 3306,
-            UserID = "userloginclient",
-            Password = "almaeper",
+            UserID = "root",
+            Password = "",
             Database = "userloginapp"
         };
         MySqlConnection Connect { get => new MySqlConnection(connStr.ConnectionString); }
@@ -39,7 +39,7 @@ namespace Csharp_User_login_NZ
 
             while (reader.Read())
             {
-                Userdata user = new Userdata(reader.GetInt32("userid"), reader.GetString("username"), reader.GetString("email"), reader.GetString("password"));
+                Userdata user = new Userdata(reader.GetInt32("userid"), reader.GetString("username"), reader.GetString("email"), reader.GetString("passwd"));
                 users.Add(user);
             }
             conn.Close();
